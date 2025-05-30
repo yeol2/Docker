@@ -10,37 +10,40 @@ pipeline {
     AWS_REGION       = "ap-northeast-2"
   }
 
-  stage('Set Branch & Environment') {
-    steps {
-      script {
-        // 1. Git 브랜치명 추출 (origin/ 접두사 제거)
-        def branchName = (env.BRANCH_NAME ?: env.GIT_BRANCH)?.replaceFirst(/^origin\//, '') ?: 'unknown'
-        env.BRANCH = branchName
+  stages {
+    stage('Set Branch & Environment') {
+      steps {
+        script {
+          // 1. Git 브랜치명 추출 (origin/ 접두사 제거)
+          def branchName = (env.BRANCH_NAME ?: env.GIT_BRANCH)?.replaceFirst(/^origin\//, '') ?: 'unknown'
+          env.BRANCH = branchName
 
-        // 2. 브랜치에 따라 ENV_LABEL 및 트리거 설정
-        if (branchName == 'main') {
-          env.ENV_LABEL = 'prod'
-          properties([
-            pipelineTriggers([
-              cron('0 9 * * *')  // prod는 매일 9시에 자동 실행
+          // 2. 브랜치에 따라 ENV_LABEL 및 트리거 설정
+          if (branchName == 'main') {
+            env.ENV_LABEL = 'prod'
+            properties([
+              pipelineTriggers([
+                cron('0 9 * * *')  // prod는 매일 9시에 자동 실행
+              ])
             ])
-          ])
-        } else if (branchName == 'dev') {
-          env.ENV_LABEL = 'dev'
-          properties([])  // 자동 트리거 없음 (수동/웹훅만)
-        } else {
-          env.ENV_LABEL = 'unknown'
-          properties([pipelineTriggers([])])  // 트리거 초기화
-          echo "❌ 지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
-          currentBuild.result = 'NOT_BUILT'
-          error("Unsupported branch: ${branchName}")
-        }
+          } else if (branchName == 'dev') {
+            env.ENV_LABEL = 'dev'
+            properties([])  // 자동 트리거 없음 (수동/웹훅만)
+          } else {
+            env.ENV_LABEL = 'unknown'
+            properties([pipelineTriggers([])])  // 트리거 초기화
+            echo "❌ 지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
+            currentBuild.result = 'NOT_BUILT'
+            error("Unsupported branch: ${branchName}")
+          }
 
-        // 3. 설정 확인 로그
-        echo "📌 현재 브랜치: ${env.BRANCH}"
-        echo "🔖 설정된 ENV_LABEL: ${env.ENV_LABEL}"
+          // 3. 설정 확인 로그
+          echo "📌 현재 브랜치: ${env.BRANCH}"
+          echo "🔖 설정된 ENV_LABEL: ${env.ENV_LABEL}"
+        }
       }
     }
+
 
     // stage('Notify Before Start') {
     //   when {

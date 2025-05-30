@@ -14,30 +14,42 @@ pipeline {
     stage('Set Branch & Environment') {
       steps {
         script {
-          // Git 브랜치명 가져오기 (origin/ 접두사 제거)
-          def branchName = (env.BRANCH_NAME ?: env.GIT_BRANCH)?.replaceFirst(/^origin\//, '') ?: 'unknown'
+          // Git 브랜치명 추출 (origin/ 접두사 제거) - fallback 포함
+          def rawBranch = env.BRANCH_NAME ?: env.GIT_BRANCH ?: 'unknown'
+          def branchName = rawBranch.replaceFirst(/^origin\//, '')
           env.BRANCH = branchName
-          echo "현재 브랜치: ${branchName}"
+
+          echo "🌿 감지된 BRANCH_NAME: ${env.BRANCH_NAME}"
+          echo "🌿 감지된 GIT_BRANCH: ${env.GIT_BRANCH}"
+          echo "📌 최종 설정된 브랜치명: ${branchName}"
 
           if (branchName == 'main') {
-            env.ENV_LABEL = 'prod'   // main → prod
-            // 매일 09:00~20:00 매시 정각 실행 (분산형)
+            env.ENV_LABEL = 'prod'
+            echo "✅ 환경 라벨: prod"
+
+            // 메인 브랜치는 자동 배포 트리거
             properties([pipelineTriggers([
-              cron('0 9 * * *')
+              cron('0 9 * * *')  // 오전 9시 정각 (예시)
             ])])
           } else if (branchName == 'dev') {
-            env.ENV_LABEL = 'dev'    // dev → dev
-            properties([]) 
-            echo "dev 브랜치는 수동 또는 웹훅으로만 트리거됩니다."
+            env.ENV_LABEL = 'dev'
+            echo "✅ 환경 라벨: dev"
+
+            // dev 브랜치는 수동/웹훅 트리거만 허용
+            properties([])
+            echo "ℹ️ dev 브랜치는 수동 또는 웹훅으로만 트리거됩니다."
           } else {
+            env.ENV_LABEL = 'dev' // fallback 기본값 설정
+            echo "⚠️ 인식 불가능한 브랜치, fallback ENV_LABEL=dev 적용"
+            
             properties([pipelineTriggers([])])
-            echo "❌ 지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
             currentBuild.result = 'NOT_BUILT'
-            error("Unsupported branch: ${branchName}")
+            error("❌ 지원되지 않는 브랜치입니다: ${branchName}")
           }
         }
       }
     }
+
 
     stage('Notify Before Start') {
       when {

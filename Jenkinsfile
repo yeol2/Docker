@@ -113,6 +113,15 @@ pipeline {
         }
       }
     }
+    
+    stage('Check .env content') {
+      steps {
+        script {
+          echo "🔍 .env 파일 내용 확인 시작"
+          sh 'cat .env'
+        }
+      }
+    }
 
     stage('Build') {
       steps {

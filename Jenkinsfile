@@ -73,18 +73,6 @@ pipeline {
       }
     }
 
-    stage('Install Dependencies') {
-      steps {
-        sh '''
-          if ! command -v ./gradlew &> /dev/null; then
-            echo "❌ Gradle Wrapper not found"
-            exit 1
-          fi
-          echo "📦 Gradle 의존성 설치 시작"
-        '''
-      }
-    }
-
     stage('Fetch .env from AWS Secrets Manager') {
       steps {
         script {

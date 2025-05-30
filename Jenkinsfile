@@ -32,14 +32,14 @@ pipeline {
           } else {
             env.ENV_LABEL = 'unknown'
             properties([pipelineTriggers([])])  // 트리거 초기화
-            echo "❌ 지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
+            echo "지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
             currentBuild.result = 'NOT_BUILT'
             error("Unsupported branch: ${branchName}")
           }
 
           // 3. 설정 확인 로그
-          echo "📌 현재 브랜치: ${env.BRANCH}"
-          echo "🔖 설정된 ENV_LABEL: ${env.ENV_LABEL}"
+          echo "현재 브랜치: ${env.BRANCH}"
+          echo "설정된 ENV_LABEL: ${env.ENV_LABEL}"
         }
       }
     }
@@ -54,14 +54,14 @@ pipeline {
           try {
             withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
               discordSend(
-                description: "🚀 배포가 곧 시작됩니다: ${service} - ${env.BRANCH} 브랜치",
+                description: "배포가 곧 시작됩니다: ${service} - ${env.BRANCH} 브랜치",
                 link: env.BUILD_URL,
                 title: "배포 시작",
-                webhookURL: "$DISCORD"
+                webhookURL: DISCORD
               )
             }
           } catch (e) {
-            echo "⚠️ 디스코드 알림 전송 실패: ${e.message}"
+            echo "디스코드 알림 전송 실패: ${e.message}"
           }
         }
       }
@@ -76,16 +76,8 @@ pipeline {
     stage('Fetch .env from AWS Secrets Manager') {
       steps {
         script {
-          // 1. aws CLI 설치 여부 확인
-          sh '''
-            if ! command -v aws &> /dev/null; then
-              echo "❌ aws CLI not found"
-              exit 1
-            fi
-          '''
-
           try {
-            // 2. Secrets Manager에서 .env 내용 가져오기
+            // 1. Secrets Manager에서 .env 내용 가져오기
             def secret = sh(
               script: """
                 aws secretsmanager get-secret-value \
@@ -97,15 +89,15 @@ pipeline {
               returnStdout: true
             ).trim()
 
-            // 3. .env 파일로 저장
+            // 2. .env 파일로 저장
             writeFile file: '.env', text: secret
 
-            // 4. 보안 강화를 위한 퍼미션 제한
+            // 3. 보안 강화를 위한 퍼미션 제한
             sh 'chmod 600 .env'
 
             echo "✅ .env 파일 로딩 완료"
           } catch (e) {
-            echo "⚠️ .env 시크릿 로딩 실패: ${e.message}"
+            echo ".env 시크릿 로딩 실패: ${e.message}"
             currentBuild.result = 'FAILURE'
             error("빌드 중단: Secrets Manager에서 .env를 불러올 수 없습니다.")
           }
@@ -132,7 +124,7 @@ pipeline {
           ).trim()
 
           if (!jarFile) {
-            error "❌ JAR 파일이 존재하지 않습니다. 빌드 실패"
+            error "JAR 파일이 존재하지 않습니다. 빌드 실패"
           }
 
           // 2. 타임스탬프 및 커밋 해시로 파일 이름 생성
@@ -141,7 +133,7 @@ pipeline {
           env.BUILD_FILE = "output-${timestamp}-${shortHash}.zip"
 
           // 3. 압축 + S3 업로드
-          echo "📦 압축 대상: ${jarFile}"
+          echo "압축 대상: ${jarFile}"
           sh """
             zip -j ${env.BUILD_FILE} ${jarFile}
             echo "✅ 압축 완료: ${env.BUILD_FILE}"
@@ -163,14 +155,14 @@ pipeline {
           withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
             discordSend(
               description: """
-              📦 **제목:** ${currentBuild.displayName}
-              ✅ **결과:** 성공
-              ⏱ **실행 시간:** ${currentBuild.duration / 1000}s
+              제목: ${currentBuild.displayName}
+              결과: 성공
+              실행 시간: ${currentBuild.duration / 1000}s
               """.stripIndent(),
               link: env.BUILD_URL,
-              title: "🎉 ${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 성공",
+              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 성공",
               result: 'SUCCESS',
-              webhookURL: "$DISCORD"
+              webhookURL: DISCORD
             )
           }
         }
@@ -183,14 +175,14 @@ pipeline {
           withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
             discordSend(
               description: """
-              📦 **제목:** ${currentBuild.displayName}
-              ❌ **결과:** 실패
-              ⏱ **실행 시간:** ${currentBuild.duration / 1000}s
+              제목: ${currentBuild.displayName}
+              결과: 실패
+              실행 시간: ${currentBuild.duration / 1000}s
               """.stripIndent(),
               link: env.BUILD_URL,
-              title: "💥 ${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 실패",
+              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 실패",
               result: 'FAILURE',
-              webhookURL: "$DISCORD"
+              webhookURL: DISCORD
             )
           }
         }

@@ -1,8 +1,8 @@
 'use client';
 
-import { FormImageType } from '@/schemas';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { FormImageType } from '../components/image-uploader/ImageUploader';
 import { newProjectFormSchema } from '../schemas';
 
 export function useImageUploader<T extends FormImageType>(
@@ -58,7 +58,7 @@ export function useImageUploader<T extends FormImageType>(
       if (item instanceof File) {
         return URL.createObjectURL(item);
       }
-      return item?.url || URL.createObjectURL(item?.file!);
+      return item.url || URL.createObjectURL(item.file!);
     });
     setPreviews(newPreviews);
 

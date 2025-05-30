@@ -1,5 +1,3 @@
-'use client';
-
 import { AUTH_PATH } from '@/constants';
 import { accessTokenAtom } from '@/store';
 import { useMutation } from '@tanstack/react-query';

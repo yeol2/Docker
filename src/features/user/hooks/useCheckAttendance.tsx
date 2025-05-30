@@ -2,7 +2,7 @@
 
 import { USER_QUERY_KEY } from '@/constants/query-key';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Attendance } from '../schemas';
+import { Attendance } from '../schemas/attendance';
 import { checkAttendance } from '../services';
 
 export function useCheckAttendance() {

@@ -1,5 +1,6 @@
 'use client';
 
+import type { DropdownOption } from '@/components';
 import { Button, Dropdown, TextInput } from '@/components';
 import { ROOT_PATH } from '@/constants';
 import { useAuth, useSignup, useTeamList } from '@/features/auth/hooks';
@@ -8,6 +9,7 @@ import { useUploadFileToS3 } from '@/hooks';
 import { isCodeVerifiedAtom, signupTokenAtom } from '@/store';
 import { useAtomValue } from 'jotai';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 type SecondStepProps = {
@@ -35,10 +37,33 @@ export function SecondStep({
   const { term } = useWatch();
   const { getValues } = useFormContext();
 
-  const { termOptions, teamNumberOptions } = useTeamList();
+  const { data: teamList } = useTeamList();
   const { mutateAsync: getAuth } = useAuth();
   const { mutateAsync: getPresignedUrl } = useUploadFileToS3();
   const { mutateAsync: signup } = useSignup();
+
+  const termOptions = useMemo(
+    () =>
+      teamList.map(({ term }) => ({
+        label: `${term}기`,
+        value: term,
+      })),
+    [teamList],
+  );
+  const teamNumberOptions = useMemo(
+    () =>
+      teamList.reduce<Record<number, DropdownOption[]>>(
+        (prev, { term, teamNumbers }) => {
+          prev[term] = teamNumbers.map((number) => ({
+            label: `${number}팀`,
+            value: number,
+          }));
+          return prev;
+        },
+        {},
+      ),
+    [teamList],
+  );
 
   const handleNonTraineeSignup = async () => {
     const values = getValues();

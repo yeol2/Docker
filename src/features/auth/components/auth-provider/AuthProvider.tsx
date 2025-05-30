@@ -3,7 +3,7 @@
 import { SpinnerIcon } from '@/components/icons';
 import { accessTokenAtom } from '@/store';
 import { useSetAtom } from 'jotai';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useAuth } from '../../hooks';
 import { useRefresh } from '../../hooks/useRefresh';
 
@@ -12,8 +12,6 @@ type AuthProviderProps = {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isLoading, setIsLoading] = useState(true);
-
   const setAccessToken = useSetAtom(accessTokenAtom);
 
   const {
@@ -28,11 +26,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const accessToken = refreshData.accessToken;
 
       setAccessToken(accessToken);
-      getAuth(accessToken, {
-        onSuccess: () => {
-          setIsLoading(false);
-        },
-      });
+      getAuth(accessToken);
     }
   }, [refreshData, getAuth, setAccessToken]);
 
@@ -40,7 +34,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return <>{children}</>;
   }
 
-  if (isLoading || isRefreshing || isGettingAuth) {
+  if (isRefreshing || isGettingAuth) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <SpinnerIcon

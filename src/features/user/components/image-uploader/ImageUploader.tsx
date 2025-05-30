@@ -2,13 +2,12 @@
 
 import { PlusIcon, ProfileIcon } from '@/components/icons';
 import { useImageUploader } from '@/features/auth/hooks';
-import { FormImageType } from '@/schemas';
 import Image from 'next/image';
 
 type ImageUploaderProps = {
   name: string;
-  value: FormImageType | null;
-  onChange: (file: FormImageType | null) => void;
+  value: File | null;
+  onChange: (file: File | null) => void;
 };
 
 export function ImageUploader({ name, value, onChange }: ImageUploaderProps) {

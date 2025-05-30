@@ -1,5 +1,4 @@
 import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants';
-import { editImageFormSchema } from '@/schemas';
 import { z } from 'zod';
 
 export const tagSchema = z
@@ -71,9 +70,31 @@ export const newProjectFormSchema = z.object({
 
 export type NewProjectForm = z.infer<typeof newProjectFormSchema>;
 
+const editProjectFormImageSchema = z
+  .object({
+    url: z.string().url().optional(),
+    file: z
+      .instanceof(File)
+      .refine(
+        (file) => file.size <= MAX_FILE_SIZE,
+        '이미지 용량은 최대 10MB 까지 가능합니다.',
+      )
+      .refine(
+        (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+        '지원하지 않는 이미지 형식입니다.',
+      )
+      .optional(),
+  })
+  .refine(
+    (data) => data.url || data.file,
+    '이미지 URL 또는 파일이 필요합니다.',
+  );
+
+export type EditProjectFormImage = z.infer<typeof editProjectFormImageSchema>;
+
 export const editProjectFormSchema = newProjectFormSchema.extend({
   images: z
-    .array(editImageFormSchema)
+    .array(editProjectFormImageSchema)
     .min(1, '프로젝트 이미지를 1장 이상 업로드해 주세요.')
     .max(5, '프로젝트 이미지는 최대 5장까지 업로드 가능합니다.'),
 });

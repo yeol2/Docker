@@ -1,44 +1,19 @@
-import { signupFormSchema } from '@/features/auth/schemas';
-import { editImageFormSchema } from '@/schemas';
 import { z } from 'zod';
 
-export const authDataSchema = z.object({
+export const myDataSchema = z.object({
   id: z.number(),
-  teamId: z.number().nullable(),
-  term: z.number().nullable(),
-  teamNumber: z.number().nullable(),
+  teamId: z.number(),
   email: z.string().email(),
+  password: z.string(),
   name: z.string(),
   nickname: z.string(),
-  course: z.enum(['FULL_STACK', 'AI', 'CLOUD']).nullable(),
+  course: z.string(),
   profileImageUrl: z.string().url(),
-  role: z.enum(['USER', 'ADMIN', 'TRAINEE']),
+  role: z.enum(['USER', 'ADMIN']),
   state: z.enum(['ACTIVE', 'INACTIVE']),
   createdAt: z.string().datetime(),
   modifiedAt: z.string().datetime(),
-  isSocial: z.boolean(),
-  emailOptInAt: z.string().datetime().nullable(),
-  emailOptOutAt: z.string().datetime().nullable(),
+  social: z.boolean(),
 });
 
-export type AuthData = z.infer<typeof authDataSchema>;
-
-export const userProfileEditFormSchema = signupFormSchema
-  .omit({ code: true })
-  .extend({
-    profileImageUrl: editImageFormSchema,
-  });
-
-export type UserProfileEditForm = z.infer<typeof userProfileEditFormSchema>;
-
-export const userProfileEditDataSchema = z.object({
-  name: z.string(),
-  nickname: z.string(),
-  term: z.number().nullable(),
-  teamNumber: z.number().nullable(),
-  course: z.string().nullable(),
-  profileImageUrl: z.string().url().nullable(),
-  mailConsent: z.boolean(),
-});
-
-export type UserProfileEditData = z.infer<typeof userProfileEditDataSchema>;
+export type MyData = z.infer<typeof myDataSchema>;

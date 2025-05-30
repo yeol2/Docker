@@ -54,8 +54,8 @@ export function SignupContainer() {
       profileImageUrl: null,
     };
 
-    if (data.profileImageUrl && data.profileImageUrl.file) {
-      const { publicUrl } = await getPresignedUrl(data.profileImageUrl.file);
+    if (data.profileImageUrl) {
+      const { publicUrl } = await getPresignedUrl(data.profileImageUrl);
       signupData.profileImageUrl = publicUrl;
     }
 

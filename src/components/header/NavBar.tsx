@@ -1,4 +1,4 @@
-import { AUTH_PATH, PROJECT_PATH, ROOT_PATH, USER_PATH } from '@/constants';
+import { AUTH_PATH, PROJECT_PATH, ROOT_PATH } from '@/constants';
 import { useLogout } from '@/features/auth/hooks';
 import { useOutsideClick } from '@/hooks';
 import { isLoggedInAtom, navbarAtom } from '@/store';
@@ -30,14 +30,6 @@ export function NavBar({ triggerRef }: NavbarProps) {
       label: '프로젝트',
       href: PROJECT_PATH.ROOT,
     },
-    ...(isLoggedIn
-      ? [
-          {
-            label: '마이페이지',
-            href: USER_PATH.MY_PAGE,
-          },
-        ]
-      : []),
   ];
   const menuHeight = `${1 + 3 * (menuList.length + 1)}rem`;
 

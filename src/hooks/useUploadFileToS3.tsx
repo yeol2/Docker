@@ -1,4 +1,4 @@
-import { PresignedUrl } from '@/schemas/image';
+import { PresignedUrl } from '@/schemas/presigned-url';
 import { getPresignedUrl, uploadFileToS3 } from '@/services';
 import { useMutation } from '@tanstack/react-query';
 

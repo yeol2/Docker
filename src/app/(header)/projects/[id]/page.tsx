@@ -44,6 +44,7 @@ export default async function ProjectDetailPage({
   return (
     <section className="pb-25">
       <Suspense fallback={<ProjectDetailFallback />}>
+        {/* <ProjectDetailFallback /> */}
         <ProjectDetailFetcher id={id} />
       </Suspense>
     </section>

@@ -5,7 +5,6 @@ export const AUTH_QUERY_KEY = Object.freeze({
 
 export const USER_QUERY_KEY = Object.freeze({
   ATTENDANCE_STATE: ['attendance-state'],
-  DASHBOARD: (teamId: number) => ['dashboard', teamId],
 });
 
 export const PROJECT_QUERY_KEY = Object.freeze({

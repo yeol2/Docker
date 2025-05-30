@@ -66,11 +66,11 @@ export function EditForm({ project }: EditFormProps) {
 
     setIsSubmitting(true);
     const prevImageUrls = data.images
-      .filter((image) => image?.url)
-      .map((image) => image!.url);
+      .filter((image) => image.url)
+      .map((image) => image.url);
     const newFiles = data.images
-      .filter((image) => image?.file)
-      .map((image) => image!.file) as File[];
+      .filter((image) => image.file)
+      .map((image) => image.file) as File[];
 
     let newUrls: string[] = [];
     if (newFiles.length) {

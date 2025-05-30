@@ -3,9 +3,7 @@ pipeline {
 
   environment {
     PROJECT_NAME     = "pumati"
-    ENV_LABEL        = ""
     SERVICE_NAME     = "backend"
-    BUILD_FILE       = ""
     S3_BUCKET        = "s3-pumati-common-storage"
     AWS_REGION       = "ap-northeast-2"
   }

@@ -30,14 +30,14 @@ pipeline {
           } else {
             env.ENV_LABEL = 'unknown'
             properties([pipelineTriggers([])])  // 트리거 초기화
-            echo "❌ 지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
+            echo "지원되지 않는 브랜치입니다: ${branchName}. 빌드를 중단합니다."
             currentBuild.result = 'NOT_BUILT'
             error("Unsupported branch: ${branchName}")
           }
 
           // 3. 설정 확인 로그
-          echo "📌 현재 브랜치: ${env.BRANCH}"
-          echo "🔖 설정된 ENV_LABEL: ${env.ENV_LABEL}"
+          echo "현재 브랜치: ${env.BRANCH}"
+          echo "설정된 ENV_LABEL: ${env.ENV_LABEL}"
         }
       }
     }
@@ -53,14 +53,14 @@ pipeline {
           try {
             withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
               discordSend(
-                description: "🚀 배포가 곧 시작됩니다: ${service} - ${env.BRANCH} 브랜치",
+                description: "배포가 곧 시작됩니다: ${service} - ${env.BRANCH} 브랜치",
                 link: env.BUILD_URL,
                 title: "배포 시작",
-                webhookURL: "$DISCORD"
+                webhookURL: DISCORD
               )
             }
           } catch (e) {
-            echo "⚠️ 디스코드 알림 전송 실패: ${e.message}"
+            echo "디스코드 알림 전송 실패: ${e.message}"
           }
         }
       }
@@ -106,7 +106,7 @@ pipeline {
 
             echo "✅ .env 파일 로딩 완료"
           } catch (e) {
-            echo "⚠️ .env 시크릿 로딩 실패: ${e.message}"
+            echo ".env 시크릿 로딩 실패: ${e.message}"
             currentBuild.result = 'FAILURE'
             error("빌드 중단: Secrets Manager에서 .env를 불러올 수 없습니다.")
           }
@@ -114,14 +114,15 @@ pipeline {
       }
     }
     
-    stage('Check .env content') {
-      steps {
-        script {
-          echo "🔍 .env 파일 내용 확인 시작"
-          sh 'cat .env'
-        }
-      }
-    }
+    // .env 파일 내용 확인 
+    // stage('Check .env content') {
+    //   steps {
+    //     script {
+    //       echo "🔍 .env 파일 내용 확인 시작"
+    //       sh 'cat .env'
+    //     }
+    //   }
+    // }
 
     stage('Build') {
       steps {
@@ -141,7 +142,7 @@ pipeline {
           env.BUILD_FILE = "output-${timestamp}-${shortHash}.zip"
 
           // 2. .env 삭제 후 압축 및 업로드
-          echo "📦 압축 대상: .next/, public/, package.json"
+          echo "압축 대상: .next/, public/, package.json"
 
           sh """
             rm -f .env
@@ -167,14 +168,14 @@ pipeline {
           withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
             discordSend(
               description: """
-              📦 **제목:** ${currentBuild.displayName}
-              ✅ **결과:** 성공
-              ⏱ **실행 시간:** ${currentBuild.duration / 1000}s
+              제목 : ${currentBuild.displayName}
+              결과 : 성공
+              실행 시간 : ${currentBuild.duration / 1000}s
               """.stripIndent(),
               link: env.BUILD_URL,
-              title: "🎉 ${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 성공",
+              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 성공",
               result: 'SUCCESS',
-              webhookURL: "$DISCORD"
+              webhookURL: DISCORD
             )
           }
         }
@@ -187,14 +188,14 @@ pipeline {
           withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
             discordSend(
               description: """
-              📦 **제목:** ${currentBuild.displayName}
-              ❌ **결과:** 실패
-              ⏱ **실행 시간:** ${currentBuild.duration / 1000}s
+              제목 : ${currentBuild.displayName}
+              결과 : 실패
+              실행 시간 : ${currentBuild.duration / 1000}s
               """.stripIndent(),
               link: env.BUILD_URL,
-              title: "💥 ${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 실패",
+              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 빌드 실패",
               result: 'FAILURE',
-              webhookURL: "$DISCORD"
+              webhookURL: DISCORD
             )
           }
         }

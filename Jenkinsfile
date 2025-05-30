@@ -3,9 +3,7 @@ pipeline {
 
   environment {
     PROJECT_NAME     = "pumati"                       // 프로젝트명
-    ENV_LABEL        = ""                             // dev / prod (브랜치에 따라 설정됨)
     SERVICE_NAME     = "frontend"                     // 서비스명
-    BUILD_FILE       = ""                             // S3에 업로드할 zip 파일 이름
     S3_BUCKET        = "s3-pumati-common-storage"     // S3 버킷
     AWS_REGION       = "ap-northeast-2"
   }

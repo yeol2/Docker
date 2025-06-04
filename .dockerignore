@@ -1,0 +1,86 @@
+# Git 관련
+.git
+.gitignore
+.gitattributes
+
+# IDE 관련
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.project
+.classpath
+.settings/
+
+# 빌드 결과물
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 로그 파일
+*.log
+logs/
+log/
+
+# 테스트 관련
+test/
+tests/
+**/test/
+**/tests/
+**/*Test.java
+**/*Tests.java
+**/*Spec.java
+
+# 임시 파일
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 환경 설정 파일
+.env
+.env.*
+application-*.yml
+application-*.properties
+!application.yml
+!application.properties
+
+# 문서
+README.md
+CHANGELOG.md
+docs/
+*.md
+
+# 기타
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.pnpm-debug.log
+.npm
+.yarn
+.cache/
+tmp/
+temp/
+
+# Docker 관련
+Dockerfile
+.dockerignore
+docker-compose*.yml
+docker-compose*.yaml
+
+# Gradle 관련
+.gradle/
+gradle/
+gradlew
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties

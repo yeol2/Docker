@@ -187,93 +187,53 @@ pipeline {
         """
         script {
           sh """
-            # .env 파일에서 필요한 값 추출
+            # .env 파일에서 환경변수 로드 및 Docker 빌드
             set -e
-            export \$(cat .env | grep SPRING_PROFILES_ACTIVE)
-            export \$(cat .env | grep DEV_DB_NAME)
-            export \$(cat .env | grep DEV_DB_USERNAME)
-            export \$(cat .env | grep DEV_DB_PASSWORD)
-            export \$(cat .env | grep DEV_DB_HOST)
-            export \$(cat .env | grep DEV_DB_PORT)
-            export \$(cat .env | grep JWT_ACCESS_TOKEN_EXPIRATION)
-            export \$(cat .env | grep JWT_REFRESH_TOKEN_EXPIRATION)
-            export \$(cat .env | grep JWT_REFRESH_COOKIE_NAME)
-            export \$(cat .env | grep JWT_REFRESH_COOKIE_MAX_AGE)
-            export \$(cat .env | grep JWT_SECRET)
-            export \$(cat .env | grep FRONTEND_IS_LOCAL)
-            export \$(cat .env | grep COOKIE_DEV_DOMAIN)
-            export \$(cat .env | grep DEV_FRONTEND_REDIRECT_URI)
-            export \$(cat .env | grep FORTUNE_SERVICE_ERROR_MESSAGE)
-            export \$(cat .env | grep FORTUNE_SERVICE_URI)
-            export \$(cat .env | grep AI_COMMENT_SERVICE_URL)
-            export \$(cat .env | grep AI_COMMENT_DEFAULT_TYPE)
-            export \$(cat .env | grep AI_BADGE_SERVICE_URL)
-            export \$(cat .env | grep RANKING_SNAPSHOT_DURATION_MINUTES)
-            export \$(cat .env | grep DEFAULT_PROFILE_IMAGE_PU_URL)
-            export \$(cat .env | grep DEFAULT_PROFILE_IMAGE_MATI_URL)
-            export \$(cat .env | grep DEFAULT_BADGE_IMAGE_URL)
-            export \$(cat .env | grep OAUTH_ALLOWED_PROVIDERS)
-            export \$(cat .env | grep KAKAO_AUTHORIZATION_GRANT_TYPE)
-            export \$(cat .env | grep KAKAO_CLIENT_AUTHENTICATION_METHOD)
-            export \$(cat .env | grep KAKAO_CLIENT_ID)
-            export \$(cat .env | grep KAKAO_CLIENT_NAME)
-            export \$(cat .env | grep KAKAO_CLIENT_SECRET)
-            export \$(cat .env | grep KAKAO_REDIRECT_URI)
-            export \$(cat .env | grep KAKAO_SCOPE)
-            export \$(cat .env | grep KAKAO_AUTHORIZATION_URI)
-            export \$(cat .env | grep KAKAO_TOKEN_URI)
-            export \$(cat .env | grep KAKAO_USER_INFO_URI)
-            export \$(cat .env | grep KAKAO_USER_NAME_ATTRIBUTE)
-            export \$(cat .env | grep AWS_REGION)
-            export \$(cat .env | grep AWS_CREDENTIALS_ACCESS_KEY)
-            export \$(cat .env | grep AWS_CREDENTIALS_SECRET_KEY)
-            export \$(cat .env | grep AWS_S3_BUCKET_NAME)
-            export \$(cat .env | grep AWS_S3_EXPIRATION_PUT_MINUTES)
-            export \$(cat .env | grep AWS_S3_MAX_REQUEST_COUNT)
+            export \$(cat .env | grep -v '^#' | grep -v '^$' | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//' | sed 's/^export //' | sed 's/=/="/' | sed 's/$/"/' | xargs)
 
-            # Docker 빌드
+            # Docker 이미지 빌드 및 ECR 푸시
             docker build \\
-              --build-arg SPRING_PROFILES_ACTIVE=\$SPRING_PROFILES_ACTIVE \\
-              --build-arg DEV_DB_NAME=\$DEV_DB_NAME \\
-              --build-arg DEV_DB_USERNAME=\$DEV_DB_USERNAME \\
-              --build-arg DEV_DB_PASSWORD=\$DEV_DB_PASSWORD \\
-              --build-arg DEV_DB_HOST=\$DEV_DB_HOST \\
-              --build-arg DEV_DB_PORT=\$DEV_DB_PORT \\
-              --build-arg JWT_ACCESS_TOKEN_EXPIRATION=\$JWT_ACCESS_TOKEN_EXPIRATION \\
-              --build-arg JWT_REFRESH_TOKEN_EXPIRATION=\$JWT_REFRESH_TOKEN_EXPIRATION \\
-              --build-arg JWT_REFRESH_COOKIE_NAME=\$JWT_REFRESH_COOKIE_NAME \\
-              --build-arg JWT_REFRESH_COOKIE_MAX_AGE=\$JWT_REFRESH_COOKIE_MAX_AGE \\
-              --build-arg JWT_SECRET=\$JWT_SECRET \\
-              --build-arg FRONTEND_IS_LOCAL=\$FRONTEND_IS_LOCAL \\
-              --build-arg COOKIE_DEV_DOMAIN=\$COOKIE_DEV_DOMAIN \\
-              --build-arg DEV_FRONTEND_REDIRECT_URI=\$DEV_FRONTEND_REDIRECT_URI \\
-              --build-arg FORTUNE_SERVICE_ERROR_MESSAGE=\$FORTUNE_SERVICE_ERROR_MESSAGE \\
-              --build-arg FORTUNE_SERVICE_URI=\$FORTUNE_SERVICE_URI \\
-              --build-arg AI_COMMENT_SERVICE_URL=\$AI_COMMENT_SERVICE_URL \\
-              --build-arg AI_COMMENT_DEFAULT_TYPE=\$AI_COMMENT_DEFAULT_TYPE \\
-              --build-arg AI_BADGE_SERVICE_URL=\$AI_BADGE_SERVICE_URL \\
-              --build-arg RANKING_SNAPSHOT_DURATION_MINUTES=\$RANKING_SNAPSHOT_DURATION_MINUTES \\
-              --build-arg DEFAULT_PROFILE_IMAGE_PU_URL=\$DEFAULT_PROFILE_IMAGE_PU_URL \\
-              --build-arg DEFAULT_PROFILE_IMAGE_MATI_URL=\$DEFAULT_PROFILE_IMAGE_MATI_URL \\
-              --build-arg DEFAULT_BADGE_IMAGE_URL=\$DEFAULT_BADGE_IMAGE_URL \\
-              --build-arg OAUTH_ALLOWED_PROVIDERS=\$OAUTH_ALLOWED_PROVIDERS \\
-              --build-arg KAKAO_AUTHORIZATION_GRANT_TYPE=\$KAKAO_AUTHORIZATION_GRANT_TYPE \\
-              --build-arg KAKAO_CLIENT_AUTHENTICATION_METHOD=\$KAKAO_CLIENT_AUTHENTICATION_METHOD \\
-              --build-arg KAKAO_CLIENT_ID=\$KAKAO_CLIENT_ID \\
-              --build-arg KAKAO_CLIENT_NAME=\$KAKAO_CLIENT_NAME \\
-              --build-arg KAKAO_CLIENT_SECRET=\$KAKAO_CLIENT_SECRET \\
-              --build-arg KAKAO_REDIRECT_URI=\$KAKAO_REDIRECT_URI \\
-              --build-arg KAKAO_SCOPE=\$KAKAO_SCOPE \\
-              --build-arg KAKAO_AUTHORIZATION_URI=\$KAKAO_AUTHORIZATION_URI \\
-              --build-arg KAKAO_TOKEN_URI=\$KAKAO_TOKEN_URI \\
-              --build-arg KAKAO_USER_INFO_URI=\$KAKAO_USER_INFO_URI \\
-              --build-arg KAKAO_USER_NAME_ATTRIBUTE=\$KAKAO_USER_NAME_ATTRIBUTE \\
-              --build-arg AWS_REGION=\$AWS_REGION \\
-              --build-arg AWS_CREDENTIALS_ACCESS_KEY=\$AWS_CREDENTIALS_ACCESS_KEY \\
-              --build-arg AWS_CREDENTIALS_SECRET_KEY=\$AWS_CREDENTIALS_SECRET_KEY \\
-              --build-arg AWS_S3_BUCKET_NAME=\$AWS_S3_BUCKET_NAME \\
-              --build-arg AWS_S3_EXPIRATION_PUT_MINUTES=\$AWS_S3_EXPIRATION_PUT_MINUTES \\
-              --build-arg AWS_S3_MAX_REQUEST_COUNT=\$AWS_S3_MAX_REQUEST_COUNT \\
+              --build-arg SPRING_PROFILES_ACTIVE="\${SPRING_PROFILES_ACTIVE}" \\
+              --build-arg DEV_DB_NAME="\${DEV_DB_NAME}" \\
+              --build-arg DEV_DB_USERNAME="\${DEV_DB_USERNAME}" \\
+              --build-arg DEV_DB_PASSWORD="\${DEV_DB_PASSWORD}" \\
+              --build-arg DEV_DB_HOST="\${DEV_DB_HOST}" \\
+              --build-arg DEV_DB_PORT="\${DEV_DB_PORT}" \\
+              --build-arg JWT_ACCESS_TOKEN_EXPIRATION="\${JWT_ACCESS_TOKEN_EXPIRATION}" \\
+              --build-arg JWT_REFRESH_TOKEN_EXPIRATION="\${JWT_REFRESH_TOKEN_EXPIRATION}" \\
+              --build-arg JWT_REFRESH_COOKIE_NAME="\${JWT_REFRESH_COOKIE_NAME}" \\
+              --build-arg JWT_REFRESH_COOKIE_MAX_AGE="\${JWT_REFRESH_COOKIE_MAX_AGE}" \\
+              --build-arg JWT_SECRET="\${JWT_SECRET}" \\
+              --build-arg FRONTEND_IS_LOCAL="\${FRONTEND_IS_LOCAL}" \\
+              --build-arg COOKIE_DEV_DOMAIN="\${COOKIE_DEV_DOMAIN}" \\
+              --build-arg DEV_FRONTEND_REDIRECT_URI="\${DEV_FRONTEND_REDIRECT_URI}" \\
+              --build-arg FORTUNE_SERVICE_ERROR_MESSAGE="\${FORTUNE_SERVICE_ERROR_MESSAGE}" \\
+              --build-arg FORTUNE_SERVICE_URI="\${FORTUNE_SERVICE_URI}" \\
+              --build-arg AI_COMMENT_SERVICE_URL="\${AI_COMMENT_SERVICE_URL}" \\
+              --build-arg AI_COMMENT_DEFAULT_TYPE="\${AI_COMMENT_DEFAULT_TYPE}" \\
+              --build-arg AI_BADGE_SERVICE_URL="\${AI_BADGE_SERVICE_URL}" \\
+              --build-arg RANKING_SNAPSHOT_DURATION_MINUTES="\${RANKING_SNAPSHOT_DURATION_MINUTES}" \\
+              --build-arg DEFAULT_PROFILE_IMAGE_PU_URL="\${DEFAULT_PROFILE_IMAGE_PU_URL}" \\
+              --build-arg DEFAULT_PROFILE_IMAGE_MATI_URL="\${DEFAULT_PROFILE_IMAGE_MATI_URL}" \\
+              --build-arg DEFAULT_BADGE_IMAGE_URL="\${DEFAULT_BADGE_IMAGE_URL}" \\
+              --build-arg OAUTH_ALLOWED_PROVIDERS="\${OAUTH_ALLOWED_PROVIDERS}" \\
+              --build-arg KAKAO_AUTHORIZATION_GRANT_TYPE="\${KAKAO_AUTHORIZATION_GRANT_TYPE}" \\
+              --build-arg KAKAO_CLIENT_AUTHENTICATION_METHOD="\${KAKAO_CLIENT_AUTHENTICATION_METHOD}" \\
+              --build-arg KAKAO_CLIENT_ID="\${KAKAO_CLIENT_ID}" \\
+              --build-arg KAKAO_CLIENT_NAME="\${KAKAO_CLIENT_NAME}" \\
+              --build-arg KAKAO_CLIENT_SECRET="\${KAKAO_CLIENT_SECRET}" \\
+              --build-arg KAKAO_REDIRECT_URI="\${KAKAO_REDIRECT_URI}" \\
+              --build-arg KAKAO_SCOPE="\${KAKAO_SCOPE}" \\
+              --build-arg KAKAO_AUTHORIZATION_URI="\${KAKAO_AUTHORIZATION_URI}" \\
+              --build-arg KAKAO_TOKEN_URI="\${KAKAO_TOKEN_URI}" \\
+              --build-arg KAKAO_USER_INFO_URI="\${KAKAO_USER_INFO_URI}" \\
+              --build-arg KAKAO_USER_NAME_ATTRIBUTE="\${KAKAO_USER_NAME_ATTRIBUTE}" \\
+              --build-arg AWS_REGION="\${AWS_REGION}" \\
+              --build-arg AWS_CREDENTIALS_ACCESS_KEY="\${AWS_CREDENTIALS_ACCESS_KEY}" \\
+              --build-arg AWS_CREDENTIALS_SECRET_KEY="\${AWS_CREDENTIALS_SECRET_KEY}" \\
+              --build-arg AWS_S3_BUCKET_NAME="\${AWS_S3_BUCKET_NAME}" \\
+              --build-arg AWS_S3_EXPIRATION_PUT_MINUTES="\${AWS_S3_EXPIRATION_PUT_MINUTES}" \\
+              --build-arg AWS_S3_MAX_REQUEST_COUNT="\${AWS_S3_MAX_REQUEST_COUNT}" \\
               -t ${env.ECR_IMAGE} .
 
             docker push ${env.ECR_IMAGE}
@@ -365,47 +325,47 @@ pipeline {
 //     }
   }
 
-  post {
-    success {
-      script {
-        if (env.BRANCH in ['main', 'dev']) {
-          withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
-            discordSend(
-              description: """
-              제목 : ${currentBuild.displayName}
-              결과 : 성공
-              배포 이미지 태그 : ${env.IMAGE_TAG}
-              실행 시간 : ${currentBuild.duration / 1000}s
-              """.stripIndent(),
-              link: env.BUILD_URL,
-              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 배포 성공",
-              result: 'SUCCESS',
-              webhookURL: DISCORD
-            )
-          }
-        }
-      }
-    }
+  // post {
+  //   success {
+  //     script {
+  //       if (env.BRANCH in ['main', 'dev']) {
+  //         withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
+  //           discordSend(
+  //             description: """
+  //             제목 : ${currentBuild.displayName}
+  //             결과 : 성공
+  //             배포 이미지 태그 : ${env.IMAGE_TAG}
+  //             실행 시간 : ${currentBuild.duration / 1000}s
+  //             """.stripIndent(),
+  //             link: env.BUILD_URL,
+  //             title: "${env.JOB_NAME} :: ${env.BRANCH} :: 배포 성공",
+  //             result: 'SUCCESS',
+  //             webhookURL: DISCORD
+  //           )
+  //         }
+  //       }
+  //     }
+  //   }
 
-    failure {
-      script {
-        if (env.BRANCH in ['main', 'dev']) {
-          withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
-            discordSend(
-              description: """
-              제목 : ${currentBuild.displayName}
-              결과 : 실패
-              배포 이미지 태그 : ${env.IMAGE_TAG}
-              실행 시간 : ${currentBuild.duration / 1000}s
-              """.stripIndent(),
-              link: env.BUILD_URL,
-              title: "${env.JOB_NAME} :: ${env.BRANCH} :: 배포 실패",
-              result: 'FAILURE',
-              webhookURL: DISCORD
-            )
-          }
-        }
-      }
-    }
-  }
+  //   failure {
+  //     script {
+  //       if (env.BRANCH in ['main', 'dev']) {
+  //         withCredentials([string(credentialsId: 'Discord-Webhook', variable: 'DISCORD')]) {
+  //           discordSend(
+  //             description: """
+  //             제목 : ${currentBuild.displayName}
+  //             결과 : 실패
+  //             배포 이미지 태그 : ${env.IMAGE_TAG}
+  //             실행 시간 : ${currentBuild.duration / 1000}s
+  //             """.stripIndent(),
+  //             link: env.BUILD_URL,
+  //             title: "${env.JOB_NAME} :: ${env.BRANCH} :: 배포 실패",
+  //             result: 'FAILURE',
+  //             webhookURL: DISCORD
+  //           )
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 }

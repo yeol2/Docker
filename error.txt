@@ -1,0 +1,54 @@
+컨테이너 존재함. 중지 및 삭제: 5b1793273cf1
+5b1793273cf1
+5b1793273cf1
+ECR 인증
+Login Succeeded
+
+WARNING! Your credentials are stored unencrypted in '/home/ubuntu/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+ECR 이미지 Pull: 236450698266.dkr.ecr.ap-northeast-2.amazonaws.com/pumati-prod-frontend-ecr:frontend-prod-23-20250604-135736-7b6afe6
+frontend-prod-23-20250604-135736-7b6afe6: Pulling from pumati-prod-frontend-ecr
+fe07684b16b8: Already exists
+50e3d90b6378: Already exists
+de1f569a8696: Already exists
+a35ae40f249e: Already exists
+71f820bedf99: Already exists
+d8933291ad24: Already exists
+6be1b212dd93: Already exists
+201860e454c2: Already exists
+40cfde208333: Already exists
+f1b5a845744c: Pulling fs layer
+49f73cefee86: Pulling fs layer
+49f73cefee86: Verifying Checksum
+49f73cefee86: Download complete
+f1b5a845744c: Verifying Checksum
+f1b5a845744c: Download complete
+f1b5a845744c: Pull complete
+49f73cefee86: Pull complete
+Digest: sha256:40714086f203b7946bf31b20117c560ec7e7954fe8cbbb3b175283f33285718f
+Status: Downloaded newer image for 236450698266.dkr.ecr.ap-northeast-2.amazonaws.com/pumati-prod-frontend-ecr:frontend-prod-23-20250604-135736-7b6afe6
+236450698266.dkr.ecr.ap-northeast-2.amazonaws.com/pumati-prod-frontend-ecr:frontend-prod-23-20250604-135736-7b6afe6
+새 컨테이너 실행
+f7624ee5396288eca9e692cc0c79dee5f6c30a271aff7fb88a00048e08ad6826
+배포 완료
+-bash: line 25: EOF: command not found
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 127
+
+GitHub has been notified of this commit’s build result
+
+Finished: FAILURE

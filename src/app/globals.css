@@ -1,0 +1,45 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Neutral Colors */
+  --color-black: #111827;
+  --color-dark-grey: #374151;
+  --color-grey: #989fa9;
+  --color-soft-grey: #e0e1e4;
+  --color-light-grey: #f5f5f7;
+  --color-white: #ffffff;
+  --color-blue-white: #f8f8ff;
+
+  /* Primary Colors */
+  --color-dark-blue: #0d3671;
+  --color-blue: #3179ed;
+  --color-soft-blue: #d6e7ff;
+  --color-light-blue: #eef5fe;
+
+  /* Secondary Colors */
+  --color-green: #a3d139;
+  --color-light-green: #fafdf5;
+  --color-red: #e53935;
+  --color-light-red: #fff9f8;
+
+  /* Social Colors */
+  --color-kakao: #fee500;
+
+  /* Breakpoints */
+  --breakpoint-xs: 25rem;
+}
+
+body {
+  @apply m-0 p-0 min-h-screen;
+  @apply text-black;
+}
+
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
+  @apply bg-soft-blue;
+}
+
+pre {
+  font-family:
+    var(--font-pretendard), 'Pretendard', 'Apple SD Gothic Neo',
+    'Malgun Gothic', sans-serif;
+}
